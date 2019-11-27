@@ -1,0 +1,105 @@
+<div id="searchBack">
+    <nav class=" color navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/#/"><b>Hotel</b></a>
+            </div>
+            <ul class="nav navbar-nav pull-right">
+                <li><a href="/#/">Home</a></li>
+                <li><a href="/#/rooms">Rooms</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="section-padding">
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <!--login-panel panel panel-default     for white style-->
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Avaliable Room Search</h3>
+                        </div>
+                        <div class="panel-body">
+
+                            <fieldset>
+
+                                <div class="well">
+                                    Room Type Preferred
+                                    <select ng-model="selectedType" ng-options="x for x in allType"></select>
+                                </div>
+
+                                <div class="form-group">
+                                    <input class="form-control" type='capacity' placeholder="Number of people"
+                                           id='numberOfPeople' name="numberOfPeople" ng-model='numberOfPeople' value=""
+                                           required>
+                                </div>
+
+                                <div class="form-group">
+                                    Arrive Date
+                                    <input type="date" ng-model="startDate" min="{{st|date:'yyyy-MM-dd'}}"/>
+                                </div>
+                                <div class="form-group">
+                                    Leave Date
+                                    <input type="date" ng-model="endDate" min="{{et|date:'yyyy-MM-dd'}}" />
+                                </div>
+
+                                <div class="form-group">
+                                    <button type="submit" ng-click="searchRooms()" class="btn btn-primary">Search
+                                    </button>
+
+                                </div>
+
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8 " ng-model="searchResult">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Our Suggestion</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="alert alert-danger" ng-show="suggestionMessage">{{suggestion}}</div>
+                            <table width="100%" class="table table-striped table-bordered table-hover"
+                                   id="dataTables-example">
+                                <thead>
+                                <tr>
+                                    <!--<th>List</th>-->
+
+                                    <th>Room Number</th>
+                                    <th>Room Type</th>
+                                    <th>Room Occupancy</th>
+                                    <th>Room Price</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr class="gradeX" ng-repeat="room in rooms">
+                                    <!--<td><a class="btn btn-info" ng-click="selectInSearch()">Select</a></td>-->
+                                    <td>{{room.room_number}}</td>
+                                    <td>{{room.type}}</td>
+                                    <td>{{room.occupancy}}</td>
+                                    <td>{{room.price}}</td>
+
+
+                                </tr>
+                                </tbody>
+                            </table>
+                            <div ng-show="orderPanel" class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">Order</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <p class="orderElement"><b>Price per day:</b> ${{priceSum}}</p>
+                                    <p class="orderElement"><b>Order total:</b> ${{priceSumTotal}}</p>
+                                    <a class="btn btn-success btn-block" ng-click="checkOut()">Check Out</a>
+                                </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

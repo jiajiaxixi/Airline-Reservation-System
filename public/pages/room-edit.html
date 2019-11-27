@@ -1,0 +1,56 @@
+<div id="roomEditBack">
+    <nav class=" color navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header" >
+                <a class="navbar-brand" href="/#/"><b>Hotel</b></a>
+            </div>
+            <ul class="nav navbar-nav pull-right">
+                <li><a href="/#/">Home</a></li>
+                <li ng-show="room"><a href="/#/rooms">Room Administration</a></li>
+                <li><a href="/#/search">Search</a></li>
+                <li ng-show="signout"><a href="/#/" ng-click="signOut()">Log Out</a></li>
+                <li><a ng-href={{AccountHref}}>{{LoginName}}</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="section-padding" >
+        <div class="container" >
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Edit Room</h3>
+                        </div>
+                        <div class="panel-body">
+                            <form>
+                                <div class="form-group">
+                                    <label>Room Number</label>
+                                    <input class="form-control" ng-model="room.room_number">
+                                </div>
+                                <div class="form-group">
+                                    <label>Room Type</label>
+                                    <input class="form-control" ng-model="room.type">
+                                </div>
+                                <div class="form-group">
+                                    <label>Room Occupancy</label>
+                                    <input class="form-control" ng-model="room.occupancy">
+                                </div>
+                                <div class="form-group">
+                                    <label>Room Price</label>
+                                    <input class="form-control" ng-model="room.price">
+                                </div>
+                                <div class="form-group">
+                                    <label>Available</label>
+                                    <select class="form-control" ng-init="selectedName = 'available'" ng-model="room.available" ng-options="x for x in ['available', 'unavailable']"></select>
+                                </div>
+                                <input type="button" class="btn btn-primary" value="Save" ng-click="save()">
+                                <a class="btn btn-default" href="/#/rooms">Go Back</a>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
