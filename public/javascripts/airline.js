@@ -21,27 +21,27 @@ app.config(['$routeProvider', function($routeProvider){
 		})
 		.when('/flights/form', {
             templateUrl: 'templates/flight-form.html',
-            controller: 'AddFlightController'
+            controller: 'addFlightController'
 		})
-		.when('/room/edit/:id', {
+		.when('/flights/edit/:id', {
             templateUrl: 'templates/flight-edit.html',
-            controller: 'EditFlightController'
+            controller: 'editFlightController'
 		})
-		.when('/room/delete/:id', {
-            templateUrl: 'templates/room-delete.html',
-            controller: 'DeleteRoomController'
+		.when('/flights/delete/:id', {
+            templateUrl: 'templates/flight-delete.html',
+            controller: 'deleteFlightController'
 		})
         .when('/search', {
             templateUrl: 'templates/search.html',
             controller: 'searchController'
         })
-        .when('/reserves', {
-            templateUrl: 'templates/reserves.html',
-            controller: 'showReserveController'
+        .when('/reservations', {
+            templateUrl: 'templates/reservations.html',
+            controller: 'showReservationController'
         })
-        .when('/reserves/:username', {
-            templateUrl: 'templates/reserves.html',
-            controller: 'showUserReserveController'
+        .when('/reservations/:username', {
+            templateUrl: 'templates/reservations.html',
+            controller: 'showUserReservationController'
         })
         .otherwise({
             redirectTo: '/'
@@ -186,65 +186,63 @@ app.controller('showFlightsController',
         });
     });
 
-app.controller('AddFlightController', ['$scope', '$resource', '$location',
+app.controller('addFlightController', ['$scope', '$resource', '$location',
     function($scope, $resource, $location) {
         if(sessionStorage.getItem('auth') != 0) {
             $location.path('/');
             return;
         }
         $scope.save = function() {
-            const Rooms = $resource('/flights');
-            Rooms.save($scope.room, function() {
+            const Flight = $resource('/flights');
+            Flight.save($scope.flight, function() {
                 $location.path('/flights');
             });
         };
     }]);
 
-// EditRoomController
-app.controller('EditFlightController', ['$scope', '$resource', '$location', '$routeParams',
+app.controller('editFlightController', ['$scope', '$resource', '$location', '$routeParams',
     function($scope, $resource, $location, $routeParams){
         if(sessionStorage.getItem('auth') != 0) {
             $location.path('/');
             return;
         }
-        var Rooms = $resource('/rooms/:id', { id: '@_id' }, {
-            update: { method: 'PUT' }
+        const Flights = $resource('/flights/:id', {id: '@_id'}, {
+            update: {method: 'PUT'}
         });
 
-        Rooms.get({ id: $routeParams.id }, function(room){
-            $scope.room = room;
+        Flights.get({id: $routeParams.id}, function(flight) {
+            $scope.flight = flight;
         });
 
         $scope.save = function(){
-            Rooms.update($scope.room, function(){
-                $location.path('/rooms');
+            Flights.update($scope.flight, function() {
+                $location.path('/flights');
             });
         }
     }]);
 
-// DeleteRoomController
-app.controller('DeleteRoomController', ['$scope', '$resource', '$location', '$routeParams',
+app.controller('deleteFlightController', ['$scope', '$resource', '$location', '$routeParams',
     function($scope, $resource, $location, $routeParams){
-        if(sessionStorage.getItem('level')!=0){
+        if(sessionStorage.getItem('auth') != 0){
             $location.path('/')
         }
 
-        var Rooms = $resource('/rooms/:id');
+        const Flights = $resource('/flights/:id');
 
-        Rooms.get({ id: $routeParams.id }, function(room){
-            $scope.room = room;
+        Flights.get({id: $routeParams.id}, function(flight) {
+            $scope.flight = flight;
         });
 
-        $scope.delete = function(){
-            Rooms.delete({ id: $routeParams.id }, function(room){
-                $location.path('/rooms');
+        $scope.delete = function() {
+            Flights.delete({id: $routeParams.id}, function(status) {
+                $location.path('/flights');
             });
         }
     }]);
 
 app.controller('searchController',['$location','$scope','$resource','$filter',
-    function($location, $scope,$resource,$filter){
-        if(sessionStorage.getItem('user')==null){
+    function($location, $scope,$resource,$filter) {
+        if(sessionStorage.getItem('user') == null) {
             window.alert("Log In Please!")
             $location.path('/login');
         }
@@ -332,14 +330,11 @@ app.controller('searchController',['$location','$scope','$resource','$filter',
             window.alert("Reservation success！");
             location.reload();
         }
-
-        //para:searchResult
     }]);
 
-// showReserveController
-app.controller('showReserveController',
+app.controller('showReservationController',
     function($scope, $resource, $location){
-        var Reserves = $resource('/reserves', {});
+        var Reserves = $resource('/reservations', {});
         Reserves.query(function(reserves){
             $scope.reserves = reserves;
         });
@@ -368,7 +363,7 @@ app.controller('showReserveController',
         }
     });
 
-app.controller('showUserReserveController',
+app.controller('showUserReservationController',
     function($scope, $resource, $location, $routeParams){
         var Reserves = $resource('/reserves/:username', {});
         var reservesList;

@@ -1,4 +1,4 @@
-<div id="roomBack">
+<div id="Back">
     <nav class=" color navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
@@ -27,26 +27,28 @@
                             <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
                                 <thead>
                                 <tr>
-                                    <th>Room Number</th>
-                                    <th>Room Type</th>
-                                    <th>Room Occupancy</th>
-                                    <th>Room Price</th>
-                                    <th>Room Available</th>
-                                    <th>Room Reserved Time</th>
+                                    <th>Flight Id</th>
+                                    <th>Capacity</th>
+                                    <th>Price</th>
+                                    <th>Departure City</th>
+                                    <th>Arrival City</th>
+                                    <th>Duration</th>
+                                    <th>Take Off Time</th>
                                     <th>Edit</th>
                                     <th>Delete</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr class="gradeX" ng-repeat="room in rooms">
-                                    <td>{{room.room_number}}</td>
-                                    <td>{{room.type}}</td>
-                                    <td>{{room.occupancy}}</td>
-                                    <td>{{room.price}}</td>
-                                    <td>{{room.available}}</td>
-                                    <td ><span id="date" class="label label-default" ng-repeat="date in room.reserved_time">{{date.start}} - {{date.end}}</span></td>
-                                    <td><a class="btn btn-info" href="/#/room/edit/{{room._id}}">Edit</a></td>
-                                    <td><a class="btn btn-danger" href="/#/room/delete/{{room._id}}">Delete</a></td>
+                                <tr class="gradeX" ng-repeat="flight in flights">
+                                    <td>{{flight._id}}</td>
+                                    <td>{{flight.capacity}}</td>
+                                    <td>{{flight.price}}</td>
+                                    <td>{{flight.departureCity}}</td>
+                                    <td>{{flight.arrivalCity}}</td>
+                                    <td>{{flight.duration}}</td>
+                                    <td>{{flight.takeOffTime}}</td>
+                                    <td><a class="btn btn-info" href="/#/flights/edit/{{flight._id}}">Edit</a></td>
+                                    <td><a class="btn btn-danger" href="/#/flights/delete/{{flight._id}}">Delete</a></td>
                                 </tr>
                                 </tbody>
                             </table>

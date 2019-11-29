@@ -2,11 +2,11 @@
     <nav class=" color navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
-                <a class="navbar-brand" href="/#/"><b>Hotel</b></a>
+                <a class="navbar-brand" href="/#/"><b>Airline Reservation System</b></a>
             </div>
             <ul class="nav navbar-nav pull-right">
                 <li><a href="/#/">Home</a></li>
-                <li><a href="/#/rooms">Rooms</a></li>
+                <li><a href="/#/reservations/{{userId}}">My Reservations</a></li>
             </ul>
         </div>
     </nav>
@@ -19,17 +19,10 @@
                     <!--login-panel panel panel-default     for white style-->
                     <div class="panel panel-primary">
                         <div class="panel-heading">
-                            <h3 class="panel-title">Avaliable Room Search</h3>
+                            <h3 class="panel-title">Available Room Search</h3>
                         </div>
                         <div class="panel-body">
-
                             <fieldset>
-
-                                <div class="well">
-                                    Room Type Preferred
-                                    <select ng-model="selectedType" ng-options="x for x in allType"></select>
-                                </div>
-
                                 <div class="form-group">
                                     <input class="form-control" type='capacity' placeholder="Number of people"
                                            id='numberOfPeople' name="numberOfPeople" ng-model='numberOfPeople' value=""
