@@ -61,12 +61,12 @@ nav ul li a {
   color: white;
 }
 
-/* line 1, ../sass/module/pages/_about.scss */
+/* line 1, ../sass/module/templates/_about.scss */
 .section-padding {
   padding: 80px;
 }
 
-/* line 1, ../sass/module/pages/_Rooms.scss */
+/* line 1, ../sass/module/templates/_Rooms.scss */
 .services-services {
   padding: 10px;
 }

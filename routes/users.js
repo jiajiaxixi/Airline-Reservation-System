@@ -67,7 +67,6 @@ router.put('/:id', function(req, res) {
 // Check if the username exists
 router.get('/username/:username', function(req,res) {
 	const collection = db.get('users');
-	console.log(req.params.username);
 	collection.findOne({username: req.params.username}, function(err, user) {
 		if (err) throw err;
         if (user != null) {

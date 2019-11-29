@@ -2,7 +2,7 @@
     <nav class=" color navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
-                <a class="navbar-brand" href="/#/"><b>Hotel</b></a>
+                <a class="navbar-brand" href="/#/"><b>Airline Reservation System</b></a>
             </div>
             <ul class="nav navbar-nav pull-right">
                 <li><a href="/#/">Home</a></li>
@@ -20,13 +20,10 @@
                         </div>
                         <div class="panel-body">
 
-                            <div class="alert alert-success" ng-show="successfulLogin" > Logging in sucessfully...</div>
-
-
                             <div class="alert alert-danger" ng-show="failureLogin" >Incorrect username/password.</div>
 
 
-                            <fieldset ng-show="!successfulLogin">
+                            <fieldset>
                                 <div class="form-group">
                                     <input class="form-control" placeholder="Username" id='username' name="username" ng-model='username' type="text"  autofocus required>
                                 </div>
