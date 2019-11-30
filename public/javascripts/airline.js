@@ -35,13 +35,9 @@ app.config(['$routeProvider', function($routeProvider){
             templateUrl: 'templates/search.html',
             controller: 'searchController'
         })
-        .when('/reservations', {
+        .when('/reservations/:id', {
             templateUrl: 'templates/reservations.html',
-            controller: 'showReservationController'
-        })
-        .when('/reservations/:username', {
-            templateUrl: 'templates/reservations.html',
-            controller: 'showUserReservationController'
+            controller: 'showReservationsController'
         })
         .otherwise({
             redirectTo: '/'
@@ -52,11 +48,10 @@ app.controller('indexController',['$location','$scope',
     function($location, $scope) {
         if (sessionStorage.getItem('user') != null) {
             $scope.signout = true;
-            $scope.accountHref = '#/reserves/' + sessionStorage.getItem('user');
+            $scope.accountHref = '#/reservations/' + sessionStorage.getItem('user');
             $scope.loginName = 'Welcome! ' + sessionStorage.getItem('user');
             if (sessionStorage.getItem('auth') == 0) {
                 $scope.admin = true;
-                $scope.accountHref = '#/reserves';
             }
         } else {
             $scope.signout = false;
@@ -180,8 +175,8 @@ app.controller('showFlightsController',
             $location.path('/');
             return;
         }
-        const Rooms = $resource('/flights', {});
-        Rooms.query(function(flights){
+        const Flights = $resource('/flights', {});
+        Flights.query(function(flights){
             $scope.flights = flights;
         });
     });
@@ -214,7 +209,7 @@ app.controller('editFlightController', ['$scope', '$resource', '$location', '$ro
             $scope.flight = flight;
         });
 
-        $scope.save = function(){
+        $scope.save = function() {
             Flights.update($scope.flight, function() {
                 $location.path('/flights');
             });
@@ -241,165 +236,81 @@ app.controller('deleteFlightController', ['$scope', '$resource', '$location', '$
     }]);
 
 app.controller('searchController',['$location','$scope','$resource','$filter',
-    function($location, $scope,$resource,$filter) {
+    function($location, $scope, $resource, $filter) {
         if(sessionStorage.getItem('user') == null) {
             window.alert("Log In Please!")
             $location.path('/login');
         }
-
-        $scope.st=new Date();
-        $scope.et=new Date();
-        var Type = $resource('/rooms/type', {});
-        Type.query(function(roomType){
-            $scope.allType = roomType;
-            $scope.allType.push("Any");
-            $scope.selectedType=$scope.allType[$scope.allType.length-1];
-            console.log($scope.selectedType)
-        });
-
-        // $scope.selectedCapacity=[{type:"Any"}];  //for load capacity in db, but not needed
-        // var Rooms = $resource('/rooms/capacity', {});
-        // Rooms.query(function(roomCapacity){
-        //     $scope.allCapacity = roomCapacity;
-        // });
-        //para: numberOfPeople  startDate endDate roomType
-        var roomList;
-        $scope.searchRooms=function()
-        {
-            console.log($scope.selectedType);
-            var roomType=$scope.selectedType;
-            console.log($scope.numberOfPeople==undefined);
-            var peopleNumber=$scope.numberOfPeople==undefined?'':$scope.numberOfPeople;
-            console.log(peopleNumber);
-            var start=$filter("date")($scope.startDate.valueOf(), "MM/dd/yyyy");
-            var end=$filter("date")($scope.endDate.valueOf(), "MM/dd/yyyy");
-            var Rooms=$resource('/rooms/search');
-            var priceSum = 0;
-
-            Rooms.save({},{roomType:roomType,peopleNumber:peopleNumber,start:start,end:end},function(result){
-                roomList=result.result;
-                if(roomList.length==0)
+        $scope.username = sessionStorage.getItem('user');
+        $scope.searchRooms = function() {
+            const Flight = $resource('/flights/search');
+            Flight.query(
                 {
-                    $scope.suggestion='Sorry, we can\'t find a plan for you for now. Try Any to find more available rooms!';
-                    $scope.suggestionMessage=true;
-                    $scope.orderPanel = false;
-                    $scope.rooms = [];
-                }
-                else
-                {
-                    $scope.suggestionMessage=false;
-                    $scope.orderPanel = true;
-                    $scope.rooms=roomList;
-                }
-                for ( var i = 0; i <roomList.length; i++) {
-                    console.log(priceSum);
-                    priceSum += parseInt(roomList[i].price);
-                }
-                $scope.priceSum = priceSum;
-                $scope.priceSumTotal = priceSum*result.diffDay;
+                    departure: $scope.departureCity,
+                    arrival: $scope.arrivalCity,
+                    time: $scope.date
+                }, function(flights) {
+                    $scope.flights = flights;
+                    if(flights.length === 0) {
+                        $scope.suggestion = 'Sorry, we can\'t find a plan for you for now. Try Any to find more available flights!';
+                        $scope.suggestionMessage = true;
+                    } else {
+                        $scope.suggestionMessage = false;
+                    }
             });
+        };
 
-        }
-
-        $scope.checkOut = function () {
-            var start=$filter("date")($scope.startDate.valueOf(), "MM/dd/yyyy");
-            var end=$filter("date")($scope.endDate.valueOf(), "MM/dd/yyyy");
-            var timePair = {};
-            timePair['start']=start;
-            timePair['end']=end;
-            for ( var i = 0; i <roomList.length; i++) {
-                if(roomList[i].reserved_time==null){
-                    roomList[i].reserved_time=[];
-                    roomList[i].reserved_time.push(timePair);
+        $scope.reserve = function (flight_id, capacity, reservedCount) {
+            const peopleNumber = $scope.numberOfPeople;
+            if (reservedCount + peopleNumber > capacity) {
+                window.alert("Failed to reserve, not enough seats!");
+                return;
+            }
+            const Flight = $resource('/flights/:id', {id: flight_id});
+            Flight.get({}, function (flight) {
+                flight.reservedCount += peopleNumber;
+                if (flight.reservedCount == flight.capacity) {
+                    flight.available = false;
                 }
-                else{
-                    roomList[i].reserved_time.push(timePair);
-                }
-                var Room = $resource('/rooms/:id', {id: '@_id' }, {
+                const FlightUpdate = $resource('/flights/:id', {id: flight_id}, {
                     update: { method: 'PUT' }
                 });
-                Room.update(roomList[i]);
-
-                var reserves=$resource('/reserves');
-                reserves.save({},{
-                    username:sessionStorage.getItem('user'),
-                    room_number:roomList[i].room_number,
-                    room_id:roomList[i]._id,
-                    date:timePair})
-            }
-            window.alert("Reservation success！");
-            location.reload();
+                FlightUpdate.update(flight, function(status) {
+                });
+                const Reserves = $resource('/reservations');
+                Reserves.save({
+                    username: sessionStorage.getItem('user'),
+                    flightId: flight_id,
+                    reservedCount: peopleNumber
+                })
+                window.alert("Reservation succeeded！");
+                location.reload();
+            });
         }
     }]);
 
-app.controller('showReservationController',
-    function($scope, $resource, $location){
-        var Reserves = $resource('/reservations', {});
-        Reserves.query(function(reserves){
-            $scope.reserves = reserves;
-        });
-        $scope.cancel = function (_id, room_id, date) {
-            var Reserves = $resource('/reserves/:id', {});
-            Reserves.delete({id:_id}, function (result) {
-                var Room = $resource('/rooms/:id');
-                Room.get({id:room_id}, function (room) {
-
-                    for (var i=0; i<room.reserved_time.length; i++){
-                        console.log(room.reserved_time[i].start);
-                        if (room.reserved_time[i].start==date.start){
-                            room.reserved_time.splice(i,1);
-                            break;
-                        }
-                    }
-
-                    var RoomUpdate = $resource('/rooms/:id', {id: room_id }, {
-                        update: { method: 'PUT' }
-                    });
-                    RoomUpdate.update(room, function (result) {
-                        location.reload();
-                    });
-                });
+app.controller('showReservationsController',
+    function($scope, $resource, $location) {
+        if(sessionStorage.getItem('user') == null) {
+            window.alert("Log In Please!")
+            $location.path('/login');
+        }
+        if(sessionStorage.getItem('auth') == 0) {
+            const Reserves = $resource('/reservations');
+            Reserves.query(function(reservations) {
+                $scope.reservations = reservations;
+            });
+        } else {
+            const Reserves = $resource('/reservations/' + sessionStorage.getItem('user'));
+            Reserves.query({}, function(reservations) {
+                $scope.reservations = reservations;
+            });
+        }
+        $scope.cancel = function (reservation_id) {
+                const Reserves = $resource('/reservations/:id', {id: reservation_id});
+                Reserves.delete({}, function (result) {
+                    location.reload();
             });
         }
     });
-
-app.controller('showUserReservationController',
-    function($scope, $resource, $location, $routeParams){
-        var Reserves = $resource('/reserves/:username', {});
-        var reservesList;
-        Reserves.query({ username: $routeParams.username },function(reserves){
-            reservesList=reserves;
-            $scope.reserves = reserves;
-        });
-        $scope.cancel = function (_id, room_id, date) {
-            var Reserves = $resource('/reserves/:id', {});
-            Reserves.delete({id:_id}, function (result) {
-                var Room = $resource('/rooms/:id');
-                Room.get({id:room_id}, function (room) {
-
-                    for (var i=0; i<room.reserved_time.length; i++){
-                        console.log(room.reserved_time[i].start);
-                        if (room.reserved_time[i].start==date.start){
-                            room.reserved_time.splice(i,1);
-                            break;
-                        }
-                    }
-
-                    var RoomUpdate = $resource('/rooms/:id', {id: room_id }, {
-                        update: { method: 'PUT' }
-                    });
-                    RoomUpdate.update(room, function (result) {
-                        location.reload();
-                    });
-
-                });
-
-
-            });
-
-
-        }
-    });
-
-
 

@@ -6,7 +6,7 @@
             </div>
             <ul class="nav navbar-nav pull-right">
                 <li><a href="/#/">Home</a></li>
-                <li><a href="/#/reservations/{{userId}}">My Reservations</a></li>
+                <li><a href="/#/reservations/{{username}}">My Reservations</a></li>
             </ul>
         </div>
     </nav>
@@ -15,40 +15,38 @@
 
         <div class="container">
             <div class="row">
-                <div class="col-md-4">
-                    <!--login-panel panel panel-default     for white style-->
+                <div class="col-md-3">
                     <div class="panel panel-primary">
                         <div class="panel-heading">
-                            <h3 class="panel-title">Available Room Search</h3>
+                            <h3 class="panel-title">Available Flight Search</h3>
                         </div>
                         <div class="panel-body">
                             <fieldset>
                                 <div class="form-group">
-                                    <input class="form-control" type='capacity' placeholder="Number of people"
-                                           id='numberOfPeople' name="numberOfPeople" ng-model='numberOfPeople' value=""
-                                           required>
-                                </div>
-
-                                <div class="form-group">
-                                    Arrive Date
-                                    <input type="date" ng-model="startDate" min="{{st|date:'yyyy-MM-dd'}}"/>
+                                    <label>Number of People</label>
+                                    <input class="form-control" type='number' name="numberOfPeople" ng-model='numberOfPeople'>
                                 </div>
                                 <div class="form-group">
-                                    Leave Date
-                                    <input type="date" ng-model="endDate" min="{{et|date:'yyyy-MM-dd'}}" />
+                                    <label>Departure City</label>
+                                    <input class="form-control" type="text" ng-model="departureCity" />
                                 </div>
-
+                                <div class="form-group">
+                                    <label>Arrival City</label>
+                                    <input class="form-control" type="text" ng-model="arrivalCity" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Flight Date</label>
+                                    <input class="form-control"type="date" ng-model="date" min="1900-01-01" max="2200-12-31"/>
+                                </div>
                                 <div class="form-group">
                                     <button type="submit" ng-click="searchRooms()" class="btn btn-primary">Search
                                     </button>
-
                                 </div>
-
                             </fieldset>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-8 " ng-model="searchResult">
+                <div class="col-md-9" ng-model="searchResult">
                     <div class="panel panel-primary">
                         <div class="panel-heading">
                             <h3 class="panel-title">Our Suggestion</h3>
@@ -59,36 +57,31 @@
                                    id="dataTables-example">
                                 <thead>
                                 <tr>
-                                    <!--<th>List</th>-->
-
-                                    <th>Room Number</th>
-                                    <th>Room Type</th>
-                                    <th>Room Occupancy</th>
-                                    <th>Room Price</th>
+                                    <th>Flight Id</th>
+                                    <th>Capacity</th>
+                                    <th>Price</th>   
+                                    <th>Duration</th>
+                                    <th>Take Off Time</th>
+                                    <th>Date</th>
+                                    <th>Available</th>
+                                    <th>reserved#</th>
+                                    <th>Reserve</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr class="gradeX" ng-repeat="room in rooms">
-                                    <!--<td><a class="btn btn-info" ng-click="selectInSearch()">Select</a></td>-->
-                                    <td>{{room.room_number}}</td>
-                                    <td>{{room.type}}</td>
-                                    <td>{{room.occupancy}}</td>
-                                    <td>{{room.price}}</td>
-
-
+                                <tr class="gradeX" ng-repeat="flight in flights">
+                                    <td>{{flight._id}}</td>
+                                    <td>{{flight.capacity}}</td>
+                                    <td>{{flight.price}}</td>                                 
+                                    <td>{{flight.duration}}</td>
+                                    <td>{{flight.takeOffTime}}</td>
+                                    <td>{{flight.date.substring(0,10)}}</td>
+                                    <td>{{flight.available}}</td>
+                                    <td>{{flight.reservedCount}}</td>
+                                    <td><a class="btn btn-info" ng-click="reserve(flight._id, flight.capacity, flight.reservedCount)">Reserve</a></td>
                                 </tr>
                                 </tbody>
                             </table>
-                            <div ng-show="orderPanel" class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h3 class="panel-title">Order</h3>
-                                </div>
-                                <div class="panel-body">
-                                    <p class="orderElement"><b>Price per day:</b> ${{priceSum}}</p>
-                                    <p class="orderElement"><b>Order total:</b> ${{priceSumTotal}}</p>
-                                    <a class="btn btn-success btn-block" ng-click="checkOut()">Check Out</a>
-                                </div>
-                        </div>
                     </div>
 
                 </div>

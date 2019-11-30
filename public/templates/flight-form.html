@@ -33,6 +33,11 @@
                                     <input class="form-control" ng-model="flight.price">
                                 </div>
                                 <div class="form-group">
+                                    <label>Available</label>
+                                    <select class="form-control" ng-options="(item ? 'True':'False') for item in [true, false]"
+                                            ng-model="flight.available"></select>
+                                </div>
+                                <div class="form-group">
                                     <label>Flight Departure City</label>
                                     <input class="form-control" ng-model="flight.departureCity">
                                 </div>
@@ -47,6 +52,10 @@
                                 <div class="form-group">
                                     <label>Flight Take Off Time</label>
                                     <input class="form-control" ng-model="flight.takeOffTime">
+                                </div>
+                                <div class="form-group">
+                                    <label>Flight Date</label>
+                                    <input class="form-control" type="date" min="2000-01-01" max="2025-12-31" ng-model="flight.date">
                                 </div>
                                 <input type="button" class="btn btn-primary" value="Save" ng-click="save()">
                             </form>

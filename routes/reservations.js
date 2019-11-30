@@ -29,6 +29,7 @@ router.post('/', function(req, res) {
     collection.insert({
         username : reservation.username,
         flightId : reservation.flightId,
+        reservedCount: reservation.reservedCount
     }, function(err, reservation) {
         if (err) throw err;
         res.json(reservation);
@@ -38,6 +39,22 @@ router.post('/', function(req, res) {
 // Delete one reservation
 router.delete('/:id', function (req, res) {
     const collection = db.get('reservations');
+    const flight_collection = db.get('flights');
+    collection.findOne({_id: req.params.id}, function(err, reservation) {
+        if (err) throw err;
+        const flightId = reservation.flightId;
+        const reservedCount = reservation.reservedCount;
+        flight_collection.findOne({_id: flightId}, function (err, flight) {
+                flight.reservedCount -= reservedCount;
+                if (!flight.available) {
+                    flight.available = true;
+                }
+                flight_collection.update({_id: flightId}, flight, function (err, status) {
+                    if (err) throw err;
+                })
+            }
+        );
+    });
     collection.remove({_id: req.params.id}, function(err, status) {
         if (err) throw err;
         res.json(status);

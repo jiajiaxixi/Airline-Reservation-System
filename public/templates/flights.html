@@ -30,10 +30,13 @@
                                     <th>Flight Id</th>
                                     <th>Capacity</th>
                                     <th>Price</th>
-                                    <th>Departure City</th>
-                                    <th>Arrival City</th>
+                                    <th>Departure</th>
+                                    <th>Arrival</th>
                                     <th>Duration</th>
                                     <th>Take Off Time</th>
+                                    <th>Date</th>
+                                    <th>Available</th>
+                                    <th>Reserved Count</th>
                                     <th>Edit</th>
                                     <th>Delete</th>
                                 </tr>
@@ -47,6 +50,9 @@
                                     <td>{{flight.arrivalCity}}</td>
                                     <td>{{flight.duration}}</td>
                                     <td>{{flight.takeOffTime}}</td>
+                                    <td>{{flight.date}}</td>
+                                    <td>{{flight.available}}</td>
+                                    <td>{{flight.reservedCount}}</td>
                                     <td><a class="btn btn-info" href="/#/flights/edit/{{flight._id}}">Edit</a></td>
                                     <td><a class="btn btn-danger" href="/#/flights/delete/{{flight._id}}">Delete</a></td>
                                 </tr>
